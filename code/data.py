@@ -114,11 +114,6 @@ def get_train_val_test_set(
     X_holdout_test, Y_holdout_test = holdout_test_data[:,1:], holdout_test_data[:,0].astype(int)
     X_val, Y_val = val_data[:,1:], val_data[:,0].astype(int)
     
-    # remove 9 (J) and 25 (Z)
-    Y_train[Y_train > 9] = Y_train[Y_train > 9] - 1
-    Y_holdout_test[Y_holdout_test > 9] = Y_holdout_test[Y_holdout_test > 9] - 1
-    Y_val[Y_val > 9] = Y_val[Y_val > 9] - 1
-
     # X_test
     X_A, X_B = X_test[:,:d], X_test[:,d:] # (n, d)
 
@@ -128,6 +123,12 @@ def get_train_val_test_set(
     X_all, Y_all = data_all[:,1:], data_all[:,0].astype(int)
     X_holdout_test_all = X_holdout_test
     X_A_all, X_B_all = X_A, X_B
+
+    # remove 9 (J) and 25 (Z)
+    Y_train[Y_train > 9] = Y_train[Y_train > 9] - 1
+    Y_holdout_test[Y_holdout_test > 9] = Y_holdout_test[Y_holdout_test > 9] - 1
+    Y_val[Y_val > 9] = Y_val[Y_val > 9] - 1
+    Y_all[Y_all > 9] = Y_all[Y_all > 9] - 1
 
     ############## resize
     if HEIGHT is not None and  WIDTH is not None :
@@ -146,8 +147,8 @@ def get_train_val_test_set(
     ############## preprocessing the data
     if scaler_class is not None :
         scaler = scaler_class_inst().fit(X_train)
-        if scaler_class == 'standard_scaler' : print("normal, mean, std :", scaler.mean_, scaler.scale_)
-        elif scaler_class == 'min_max_scaler' : print("normal, min, max :", scaler.min_, scaler.max_)
+        if scaler_class == 'standard_scaler' : print("normal, mean, std :", scaler.mean_[:5], scaler.scale_[:5])
+        elif scaler_class == 'min_max_scaler' : print("normal, min, max :", scaler.min_[:5], scaler.max_[:5])
         X_train = scaler.transform(X_train)
         X_val = scaler.transform(X_val)
         X_holdout_test = scaler.transform(X_holdout_test)
@@ -155,8 +156,8 @@ def get_train_val_test_set(
         X_B = scaler.transform(X_B)
 
         scaler = scaler_class_inst().fit(X_all)
-        if scaler_class == 'standard_scaler' :print("all, mean, std :", scaler.mean_, scaler.scale_)
-        elif scaler_class == 'min_max_scaler' : print("all, min, max :", scaler.min_, scaler.max_)
+        if scaler_class == 'standard_scaler' :print("all, mean, std :", scaler.mean_[:5], scaler.scale_[:5])
+        elif scaler_class == 'min_max_scaler' : print("all, min, max :", scaler.min_[:5], scaler.max_[:5])
         X_all = scaler.transform(X_all)
         X_A_all = scaler.transform(X_A_all)
         X_B_all = scaler.transform(X_B_all)

@@ -67,11 +67,11 @@ def chars2ascii_sum_ascii2char(character1, character2, is_int_or_char = "int"):
     while sum_ascii > 122 : sum_ascii -= 65
     return chr(sum_ascii)
 
-def chars2ascii_sum_ascii2char_list(list_chars1, list_chars2, is_int_or_char = "int"):
+def ascii2char_list(list_):
     """
-    convert two list characters to ascii, sum them, reconvert the result in string format
+    convert two list  ascii to int
     """
-    return [chars2ascii_sum_ascii2char(char1, char2, is_int_or_char) for char1, char2 in zip(list_chars1, list_chars2)]
+    return [chr(char) for char in list_]
 
 def chars2ascii_sum_ascii2char_list(list_chars1, list_chars2, is_int_or_char = "int"):
     """
@@ -106,7 +106,7 @@ def predict_nontest(model, X, Y, seed=0) :
     X, Y = X[indices], Y[indices] 
 
     Y_hat = model.predict(X)
-    test_acc = sum(np.array(Y_hat) == np.array(Y)) / n
+    test_acc = sum(Y_hat == Y) / n
 
     Y_tmp = class_to_ascii(Y_hat)
     Y_hat_A, Y_hat_B = Y_tmp[:mid], Y_tmp[mid:2*mid+1]

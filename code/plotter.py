@@ -1,8 +1,21 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
-from utils import DIR_PATH_FIGURES
+from utils import DIR_PATH_FIGURES, ascii2char_list, class_to_ascii
 
+def show_example_images(X, Y, n_imgs=15, mono = 'gray'):
+    C=5
+    L=n_imgs//C + 1*(n_imgs%C!=0)
+    figsize=(5*C, 5*L)
+    Y_ch = ascii2char_list(class_to_ascii(Y))
+    fig = plt.figure(figsize = figsize)
+    for i, idx in enumerate(torch.randint(0, X.shape[0], (n_imgs,))) :
+        plt.subplot(L, C, i+1)
+        plt.imshow(X[idx], cmap = mono)
+        plt.title("Class {} ({})".format(Y[idx], Y_ch[idx]))
+    plt.tight_layout()
+    
 def plot_training_curve(n_epochs, train_losses, train_accs, val_losses, val_accs, fileName = None):
     """Plot the training/validation losses & acc per epoch of training"""
     rows, cols = 1, 2
