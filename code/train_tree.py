@@ -1,8 +1,8 @@
 """
-python main.py --model_name test --n_estimators 2 --max_depth 10 --max_samples 0.2 --sklearn True --SIZE 10
-python main.py --model_name test --n_estimators 2 --max_depth 2 --max_samples 0.2 --sklearn False --SIZE 2
+python train_tree.py --model_name test --n_estimators 2 --max_depth 10 --max_samples 0.2 --sklearn True --SIZE 10
+python train_tree.py --model_name test --n_estimators 2 --max_depth 2 --max_samples 0.2 --sklearn False --SIZE 2
 
-python main.py --model_name test --n_estimators 100 --max_depth 100 --max_samples 1.0 --sklearn False --SIZE 10
+python train_tree.py --model_name test --n_estimators 100 --max_depth 100 --max_samples 1.0 --sklearn False --SIZE 10
 """
 
 import numpy as np
@@ -18,25 +18,9 @@ from sklearn.ensemble import RandomForestClassifier as sklearn_RandomForestClass
 # print(sklearn.ensemble)
 
 from utils import DATA_PATH, DIR_PATH_FIGURES, DIR_PATH_SUBMISSIONS, H, W
-from utils import predict_nontest, predict_test, save_for_submission, eval
+from utils import predict_nontest, predict_test, save_for_submission, eval, bool_flag
 from data import  get_dataset
-from model import RandomForestClassifier
-
-
-
-FALSY_STRINGS = {'off', 'false', '0'}
-TRUTHY_STRINGS = {'on', 'true', '1'}
-
-def bool_flag(s):
-    """
-    Parse boolean arguments from the command line.
-    """
-    if s.lower() in FALSY_STRINGS:
-        return False
-    elif s.lower() in TRUTHY_STRINGS:
-        return True
-    else:
-        raise argparse.ArgumentTypeError("Invalid value for a boolean flag!")
+from model_tree import RandomForestClassifier
 
 if __name__ == "__main__" :
 

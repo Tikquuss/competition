@@ -124,6 +124,20 @@ def eval(model, X, Y):
     Y_hat = model.predict(X)
     return sum(Y_hat == Y) / X.shape[0]
 
+FALSY_STRINGS = {'off', 'false', '0'}
+TRUTHY_STRINGS = {'on', 'true', '1'}
+
+def bool_flag(s):
+    """
+    Parse boolean arguments from the command line.
+    """
+    if s.lower() in FALSY_STRINGS:
+        return False
+    elif s.lower() in TRUTHY_STRINGS:
+        return True
+    else:
+        raise argparse.ArgumentTypeError("Invalid value for a boolean flag!")
+
 if __name__ == "__main__" :
     tmp = chars2ascii_sum_ascii2char("A", "B", is_ascii_or_char='char'), chars2ascii_sum_ascii2char(ord("A"), ord("B"), is_ascii_or_char='int')
 

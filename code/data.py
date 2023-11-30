@@ -200,9 +200,10 @@ def train_test_split(
     # https://stackoverflow.com/a/3677283/11814682
     n = dataset.shape[0]
     train_size = train_pct * n // 100
-    holdout_test_size = holdout_pct * n // 100
+    holdout_test_size = holdout_pct * n // 100 
     val_size = n - train_size - holdout_test_size
     indices = np.random.permutation(n)
+    
     train_idx, holdout_test_idx, val_idx = indices[:train_size], indices[train_size:train_size+holdout_test_size], indices[train_size+holdout_test_size:]
     train_data, holdout_test_data, val_data = dataset[train_idx,:], dataset[holdout_test_idx,:], dataset[val_idx,:]
 
