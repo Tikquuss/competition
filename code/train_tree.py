@@ -5,9 +5,6 @@ python train_tree.py --model_name test --n_estimators 2 --max_depth 2 --max_samp
 python train_tree.py --model_name test --n_estimators 100 --max_depth 100 --max_samples 1.0 --sklearn False --SIZE 10
 """
 
-import numpy as np
-import pandas as pd
-from collections import Counter
 import argparse
 import pickle
 import os

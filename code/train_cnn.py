@@ -15,13 +15,15 @@ import matplotlib.pyplot as plt
 import tqdm
 import copy
 
+import argparse
+import os
 
 from utils import DATA_PATH, DIR_PATH_FIGURES, DIR_PATH_SUBMISSIONS, H, W
 from utils import predict_nontest, predict_test, save_for_submission, eval, bool_flag
 from data import  get_dataset
 from plotter import plot_training_curve, confusion_matrix, scores, plot_confusion_matrix, show_example_images
 from model_cnn import MyCNN, MyCNN_2, ResNet9
-from trainer import Trainer
+from trainer import Trainer, get_dataset_pytorch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 DTYPE=torch.float64
@@ -52,14 +54,45 @@ if __name__ == "__main__" :
     n_epochs=params.n_epochs
     batch_size=params.batch_size 
     
+    # Model & Trainer
     #model = MyCNN(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
     #model = MyCNN_2(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
-    model = ResNet9(n_classes=n_classes, dropout_conv=dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
+    model = ResNet9(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
     print(model)
 
     optimizer = optim.AdamW(model.parameters(), params.learning_rate, weight_decay=params.weight_decay )
     criterion = nn.CrossEntropyLoss()
     trainer = Trainer(model, criterion, optimizer)
+
+
+    ######## Data
+    scaler_class=None
+    #scaler_class='standard_scaler'
+    scaler_class='min_max_scaler'
+    
+    train_transforms = transforms.Compose(
+        [
+            #transforms.RandomCrop(SIZE),
+            #transforms.RandomHorizontalFlip(p=0.2),
+            #transforms.RandomRotation(degrees=10),
+            transforms.Normalize((0.5,), (0.5,))
+        ])
+
+    test_transforms = transforms.Compose([
+            transforms.Normalize((0.5,), (0.5,))
+        ])
+
+    IDs_test, (X_tr, Y_tr, X_ht_test, Y_ht_test, X_val, Y_val, X_all, Y_all, X_test, X_test_all, X_ht_test_all, d) = get_dataset_pytorch(
+        train_pct=80, holdout_pct=10, train_transforms=train_transforms, test_transforms=test_transforms, 
+        k_fold=False, HEIGHT=HEIGHT, WIDTH=WIDTH, do_over_sampling=False, do_under_sampling=False,
+        scaler_class=scaler_class, is_pytorch=True, device=device, seed=0
+        )
+
+    # IDs_test, (X_tr, Y_tr, X_ht_test, Y_ht_test, X_val, Y_val, X_all, Y_all, X_test, X_test_all, X_ht_test_all, d) = get_dataset_pytorch(
+    #     train_pct=99, holdout_pct=1, train_transforms=train_transforms, test_transforms=test_transforms, 
+    #     k_fold=False, HEIGHT=HEIGHT, WIDTH=WIDTH, do_over_sampling=False, do_under_sampling=False,
+    #     scaler_class=scaler_class, is_pytorch=True, device=device, seed=0
+    #     )
 
     ########################################################################
     ########################################################################
