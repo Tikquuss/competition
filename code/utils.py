@@ -4,6 +4,7 @@ import pandas as pd
 from collections import Counter
 import string
 import os
+import ntpath
 import copy
 
 H, W = 28, 28
@@ -79,13 +80,14 @@ def chars2ascii_sum_ascii2char_list(list_chars1, list_chars2, is_int_or_char = "
     """
     return [chars2ascii_sum_ascii2char(char1, char2, is_int_or_char) for char1, char2 in zip(list_chars1, list_chars2)]
 
-def save_for_submission(IDs, Y_hat_A, Y_hat_B, fileName="submission.csv") :
+def save_for_submission(IDs, Y_hat_A, Y_hat_B, fileName="submission.csv", dps=None) :
     """Save the prediction in an appropriate format for submission"""
     Y_hat_A = class_to_ascii(Y_hat_A)
     Y_hat_B = class_to_ascii(Y_hat_B)
     Y_hat = chars2ascii_sum_ascii2char_list(Y_hat_A, Y_hat_B, is_int_or_char = "int")
     print(Counter(Y_hat))
-    pd.DataFrame({'id': IDs, 'label': Y_hat}, dtype=str).to_csv(os.path.join(DIR_PATH_SUBMISSIONS, fileName),  index=False, sep=",")
+    if dps is None : dps = DIR_PATH_SUBMISSIONS
+    pd.DataFrame({'id': IDs, 'label': Y_hat}, dtype=str).to_csv(os.path.join(dps, fileName),  index=False, sep=",")
 
 def predict_test(model, X_test) :
     return model.predict(X_test[0]), model.predict(X_test[1])
@@ -138,6 +140,11 @@ def bool_flag(s):
         return True
     else:
         raise argparse.ArgumentTypeError("Invalid value for a boolean flag!")
+
+def path_leaf(path):
+    # https://stackoverflow.com/a/8384788/11814682
+    head, tail = ntpath.split(path)
+    return head
 
 if __name__ == "__main__" :
     tmp = chars2ascii_sum_ascii2char("A", "B", is_ascii_or_char='char'), chars2ascii_sum_ascii2char(ord("A"), ord("B"), is_ascii_or_char='int')

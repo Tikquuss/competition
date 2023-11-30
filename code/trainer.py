@@ -2,16 +2,19 @@ import torch
 
 import tqdm
 import copy
+import os
 
 from data import get_dataset
 
 class Trainer:
     """Trainer for classification"""
-    def __init__(self, model, criterion, optimizer):
+    def __init__(self, model, criterion, optimizer, lr_scheduler=None, checkpoint_path=None):
         super(Trainer, self).__init__()
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
+        self.lr_scheduler = lr_scheduler
+        self.checkpoint_path = checkpoint_path
         self.all_model = {}
 
     def __call__(self, x):
@@ -78,7 +81,7 @@ class Trainer:
             val_acc = n_correct/n
             return val_acc.item(), val_loss.item()
 
-    def train(self, X_train, Y_train, X_val=None, Y_val=None, batch_size=None, n_epochs = 1, use_tqdm=True):
+    def train(self, X_train, Y_train, X_val=None, Y_val=None, batch_size=None, n_epochs = 1, use_tqdm=True, lr_step=1):
         '''
         Implementation of the training procedure for n_epochs epochs
 
@@ -102,8 +105,20 @@ class Trainer:
 
         best_model = None
         best_acc = 0.
-
-        self.all_model[-1] = copy.deepcopy(self.model).to('cpu')
+        if self.checkpoint_path is not None :
+            os.makedirs(self.checkpoint_path, exist_ok=True)
+            to_be_save = {
+                "train_accs" : None, 
+                "train_losses" : None, 
+                "val_accs": None, 
+                "val_losses" : None,
+                "model" : self.model.state_dict(),
+                "optimizer": self.optimizer.state_dict()
+            }
+            torch.save(to_be_save, os.path.join(self.checkpoint_path, f"checkpoint_{-1}.pth"))
+        else :
+            self.all_model[-1] = copy.deepcopy(self.model).to('cpu')
+        
         try:
             tmp = range(n_epochs)
             if use_tqdm : tmp = tqdm.tqdm(tmp, desc="Training ...")
@@ -113,8 +128,7 @@ class Trainer:
                     train_acc, train_loss = self.train_loop(X_train, Y_train, train_batch_size)
                     train_accs.append(train_acc)
                     train_losses.append(train_loss)
-                    self.all_model[epoch] = copy.deepcopy(self.model).to('cpu')
-
+                    
                     to_print = f"\n Epoch: {epoch} | Train Acc: {train_acc:.6f} | Train Loss: {train_loss:.6f}"
                     # Validation
                     if not do_validation :
@@ -135,6 +149,22 @@ class Trainer:
 
                 except KeyboardInterrupt:
                     break
+                
+                if self.lr_scheduler is not None and (epoch+1)%lr_step==0:
+                    self.lr_scheduler.step()  
+                
+                if self.checkpoint_path is not None :
+                    to_be_save = {
+                        "train_accs" : train_accs[-1], 
+                        "train_losses" : train_losses[-1], 
+                        "val_accs": val_accs[-1] if do_validation else None, 
+                        "val_losses" : val_losses[-1] if do_validation else None,
+                        "model" : self.model.state_dict(),
+                        "optimizer": self.optimizer.state_dict()
+                    }
+                    torch.save(to_be_save, os.path.join(self.checkpoint_path, f"checkpoint_{epoch}.pth"))
+                else :
+                    self.all_model[epoch] = copy.deepcopy(self.model).to('cpu')
 
         except KeyboardInterrupt:
             pass
