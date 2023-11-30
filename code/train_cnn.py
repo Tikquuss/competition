@@ -1,5 +1,5 @@
 """
-python train_cnn.py --model_name test  --learning_rate 0.001 --weight_decay 0.0001 --n_epochs 10 --batch_size 512 --dropout_conv 0.0 --dropout_fc 0.0
+python train_cnn.py --model_name test  --learning_rate 0.001 --weight_decay 0.0001 --n_epochs 50 --batch_size 512 --dropout_conv 0.0 --dropout_fc 0.0
 """
 
 import torch
@@ -34,7 +34,7 @@ if __name__ == "__main__" :
     parser.add_argument("--model_name", type=str, help="to save the sumbssion")
     parser.add_argument("--learning_rate", type=float, default=0.001, help="learning rate") 
     parser.add_argument("--weight_decay", type=float, default=0.0001, help="weight decay") 
-    parser.add_argument("--n_epochs", type=int, default=10, help="number of epochs") 
+    parser.add_argument("--n_epochs", type=int, default=50, help="number of epochs") 
     parser.add_argument("--batch_size", type=int, default=512*1, help="bach size") 
     parser.add_argument("--dropout_conv", type=float, default=0.0, help="dropout convnet") 
     parser.add_argument("--dropout_fc", type=float, default=0.0, help="dropout classifier (fc layer)")     
@@ -69,7 +69,7 @@ if __name__ == "__main__" :
     scaler_class=None
     #scaler_class='standard_scaler'
     scaler_class='min_max_scaler'
-    
+
     train_transforms = transforms.Compose(
         [
             #transforms.RandomCrop(SIZE),

@@ -203,14 +203,23 @@ def train_test_split(
     holdout_test_size = holdout_pct * n // 100 
     val_size = n - train_size - holdout_test_size
     indices = np.random.permutation(n)
-    
-    train_idx, holdout_test_idx, val_idx = indices[:train_size], indices[train_size:train_size+holdout_test_size], indices[train_size+holdout_test_size:]
+
+    train_idx = indices[:train_size]
+    #holdout_test_idx, val_idx = indices[train_size:train_size+holdout_test_size], indices[train_size+holdout_test_size:]
+    dummy_idx = indices[:1]
+    if holdout_test_size==0 :
+        if val_size!=0: holdout_test_idx, val_idx = dummy_idx, indices[train_size:]
+        else : holdout_test_idx, val_idx = dummy_idx, dummy_idx
+    else :
+        if val_size!=0: 
+            holdout_test_idx, val_idx = indices[train_size:train_size+holdout_test_size], indices[train_size+holdout_test_size:]
+        else : holdout_test_idx, val_idx = indices[train_size:], dummy_idx
+        
     train_data, holdout_test_data, val_data = dataset[train_idx,:], dataset[holdout_test_idx,:], dataset[val_idx,:]
 
     return get_train_val_test_set(
         train_data, holdout_test_data, val_data, test_dataset.to_numpy(), d, do_over_sampling, 
         do_under_sampling, HEIGHT, WIDTH, scaler_class=scaler_class, is_pytorch=is_pytorch, device=device)
-
 
 def train_test_split_k_fold(
     train_dataset, test_dataset, train_pct, holdout_pct, 
@@ -237,8 +246,11 @@ def train_test_split_k_fold(
     holdout_test_size = holdout_pct * n // 100
     val_size = n - train_size - holdout_test_size
 
-    df_holdout = df[:holdout_test_size]
-    df = df[holdout_test_size:]
+    if holdout_test_size==0 :
+        df_holdout = df[:1]
+    else :
+        df_holdout = df[:holdout_test_size]
+        df = df[holdout_test_size:]
     n = n - holdout_test_size
 
     n_folds = n // val_size + 1 * (0 if n % val_size == 0 else 1)
@@ -251,7 +263,6 @@ def train_test_split_k_fold(
         fold = pd.concat([fold, val_fold])
         yield get_train_val_test_set(train_fold.to_numpy(), df_holdout.to_numpy(), val_fold.to_numpy(), test_dataset.to_numpy(), d,
                                      do_over_sampling, do_under_sampling, HEIGHT, WIDTH, scaler_class=scaler_class, is_pytorch=is_pytorch, device=device)
-        #yield train_fold, val_fold
 
 
 def get_dataset(

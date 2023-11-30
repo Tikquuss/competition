@@ -107,6 +107,7 @@ def predict_nontest(model, X, Y, seed=0) :
 
     Y_hat = model.predict(X)
     test_acc = sum(Y_hat == Y) / n
+    if 'torch' in str(type(test_acc)) : test_acc = test_acc.item()
 
     Y_tmp = class_to_ascii(Y_hat)
     Y_hat_A, Y_hat_B = Y_tmp[:mid], Y_tmp[mid:2*mid+1]
@@ -118,7 +119,7 @@ def predict_nontest(model, X, Y, seed=0) :
 
     test_acc_sum = sum([int(Y_char[i] == Y_hat_char[i]) for i in range(len(Y_char))]) / len(Y_char)
 
-    return test_acc, test_acc_sum
+    return test_acc*100, test_acc_sum*100
 
 def eval(model, X, Y):
     Y_hat = model.predict(X)

@@ -249,6 +249,8 @@ def get_dataset_pytorch(
     seed=0
     ) :
 
+    torch.manual_seed(seed)
+
     if not k_fold :
         return get_normal_dataset(
             train_pct=train_pct, holdout_pct=holdout_pct, 
