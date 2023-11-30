@@ -24,7 +24,7 @@ from utils import predict_nontest, predict_test, save_for_submission, eval, bool
 from data import  get_dataset
 from plotter import plot_training_curve, confusion_matrix, scores, plot_confusion_matrix, show_example_images
 from model_cnn import MyCNN, MyCNN_2, ResNet, Net
-from trainer import Trainer, get_dataset_pytorch
+from trainer import Trainer, get_dataset_pytorch, resample
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 DTYPE=torch.float64
@@ -46,6 +46,11 @@ if __name__ == "__main__" :
     parser.add_argument("--seed", type=int, default=0, help="random seed")
     params = parser.parse_args()
     print(params)
+
+    # boostrap
+    boostrap=False
+    max_samples=0.9
+    replace=False
 
     log_dir = Path(DIR_PATH_FIGURES).parent.absolute()
     #log_dir = path_leaf(DIR_PATH_FIGURES)
@@ -109,8 +114,8 @@ if __name__ == "__main__" :
     train_start = time.time()
     ########################################################################
     ########################################################################
-    if params.train_pct + params.holdout_pct < 100 :
-        # validation data
+    if params.train_pct + params.holdout_pct < 100 : # validation data
+        if boostrap : X_tr, Y_tr = resample(X_tr, Y_tr, max_samples=max_samples, replace=replace)
         train_accs, train_losses, val_accs, val_losses, best_acc = trainer.train(
             X_tr, Y_tr, X_val, Y_val, batch_size=batch_size, n_epochs = n_epochs, use_tqdm=True)
         train_acc = eval(trainer, X_tr, Y_tr) 
@@ -121,8 +126,8 @@ if __name__ == "__main__" :
         conf_matrix_2  = confusion_matrix(Y_ht_test, trainer.test(X_ht_test), n_classes=n_classes)
 
         Y_hat_A, Y_hat_B = predict_test(trainer, X_test)
-    else :
-        # No validation data
+    else : # No validation data
+        if boostrap : X_all, Y_all = resample(X_all, Y_all, max_samples=max_samples, replace=replace)
         train_accs, train_losses, val_accs, val_losses, best_acc = trainer.train(
             X_all, Y_all, X_val=None, Y_val=None, batch_size=batch_size, n_epochs = n_epochs, use_tqdm=True)
         train_acc = eval(trainer, X_all, Y_all)  

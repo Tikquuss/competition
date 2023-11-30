@@ -1,10 +1,25 @@
 import torch
-
 import tqdm
 import copy
 import os
 
 from data import get_dataset
+import numpy as np
+
+def resample(X, Y, max_samples=None, replace=False):
+    # Resample with/withouth replacement
+    n_samples = X.shape[0]
+    if max_samples is None : max_samples = n_samples
+    elif type(max_samples) == int : max_samples = max_samples
+    elif type(max_samples) == float : max_samples = max(round(n_samples * max_samples), 1)
+    else : raise ValueError("max_samples must be None or int or float")
+    if not replace :
+        max_samples = min(max_samples, n_samples)
+        bootstrap_indices = torch.from_numpy(np.random.choice(np.arange(n_samples), size=max_samples, replace=False)).long()
+    else :
+        bootstrap_indices = torch.randint(low=0, high=n_samples, size=(max_samples,))
+
+    return X[bootstrap_indices], Y[bootstrap_indices]
 
 class Trainer:
     """Trainer for classification"""

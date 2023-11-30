@@ -415,7 +415,7 @@ class Tree:
             elif type(self._max_samples) == int : max_samples = self._max_samples
             elif type(self._max_samples) == float : max_samples = max(round(n_samples * self._max_samples), 1)
             else : raise ValueError("max_samples must be int or float")
-            bootstrap_indices = np.random.randint(0, max_samples, max_samples)
+            bootstrap_indices = np.random.randint(low=0, high=n_samples, size=max_samples)
             X, Y = X[bootstrap_indices], Y[bootstrap_indices]
 
         if type(self._min_samples_split) == int : min_samples_split = self._min_samples_split
