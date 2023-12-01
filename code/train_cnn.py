@@ -80,9 +80,9 @@ if __name__ == "__main__" :
     ########################################################################
     ########################################################################
     # Model & Trainer
-    model = MyCNN(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
+    #model = MyCNN(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
     #model = MyCNN_2(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
-    #model = ResNet(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
+    model = ResNet(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
     #model = Net(n_classes=n_classes).to(DTYPE).to(device)
     #print(model)
 

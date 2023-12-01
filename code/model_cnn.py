@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class Swish(nn.Module):
     def __init__(self, beta=1.0, inplace=False):
@@ -322,3 +323,6 @@ class Net(nn.Module):
 
         output = F.log_softmax(out, dim=1)
         return output
+
+    def predict(self, x):
+        return self.forward(x).argmax(dim=-1)

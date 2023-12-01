@@ -177,7 +177,8 @@ class Trainer:
                         "model" : self.model.state_dict(),
                         "optimizer": self.optimizer.state_dict()
                     }
-                    torch.save(to_be_save, os.path.join(self.checkpoint_path, f"checkpoint_{epoch}.pth"))
+                    if (epoch+1)%2==0: 
+                        torch.save(to_be_save, os.path.join(self.checkpoint_path, f"checkpoint_{epoch}.pth"))
                 else :
                     self.all_model[epoch] = copy.deepcopy(self.model).to('cpu')
 
