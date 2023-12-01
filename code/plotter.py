@@ -16,7 +16,7 @@ def show_example_images(X, Y=None, n_imgs=15, mono = 'gray'):
         if Y is not None : plt.title("Class {} ({})".format(Y[idx], Y_ch[idx]))
     plt.tight_layout()
 
-def plot_training_curve(n_epochs, train_losses, train_accs, val_losses, val_accs, fileName = None, dpf=None):
+def plot_training_curve(n_epochs, train_losses, train_accs, val_losses, val_accs, fileName = None, dpf=None, show=True):
     """Plot the training/validation losses & acc per epoch of training"""
     rows, cols = 1, 2
     figsize = (6, 4)
@@ -49,7 +49,8 @@ def plot_training_curve(n_epochs, train_losses, train_accs, val_losses, val_accs
 
     if dpf is None : dpf=DIR_PATH_FIGURES
     if fileName is not None : plt.savefig(f"{dpf}/{fileName}"  + '.pdf', dpi=300, bbox_inches='tight', format='pdf')
-    plt.show()
+    
+    if show : plt.show()
 
 
 def plot_cdf(samples, label = None, ax = None, fileName=None, dpf=None):
@@ -119,7 +120,7 @@ def confusion_matrix(true_labels, pred_labels, n_classes = None):
     for (true, pred) in zip(true_labels, pred_labels): matrix[int(true), int(pred)] += 1
     return matrix
 
-def scores(cm, fileName=None, dpf=None) :
+def scores(cm, fileName=None, dpf=None, show=True) :
     """Compute and plot the per class (and the average) precision, recall and  f1-score using the confusion matrix cm"""
     precision_c = np.diag(cm) / np.sum(cm, axis = 0)
     recall_c = np.diag(cm) / np.sum(cm, axis = 1)
@@ -138,13 +139,14 @@ def scores(cm, fileName=None, dpf=None) :
                   yticklabels=['precision', 'recall', 'f1_score'],
                   x_label=None, y_label=None,
                   rotation_x=0, rotation_y=0,
+                  show=show,
                   fileName=fileName,
                   dpf=dpf)
 
     return {"acc" : np.diag(cm).sum() / cm.sum(), "precision" : precision_c, "recall" : recall_c, "f1_score" : f1_score_c }
     #return None
 
-def plot_confusion_matrix(conf_matrix, fileName=None, dpf=None) :
+def plot_confusion_matrix(conf_matrix, fileName=None, dpf=None, show=True) :
       """Plot the confusion matrix"""
       L, C = 1, 1
       figsize=(C*15, L*10)
@@ -171,4 +173,4 @@ def plot_confusion_matrix(conf_matrix, fileName=None, dpf=None) :
       if dpf is None : dpf=DIR_PATH_FIGURES
       if fileName is not None : plt.savefig(f"{dpf}/{fileName}"  + '.pdf', dpi=300, bbox_inches='tight', format='pdf')
 
-      plt.show()
+      if show : plt.show()

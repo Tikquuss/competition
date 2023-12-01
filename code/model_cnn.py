@@ -222,6 +222,16 @@ class ResNet(nn.Module):
         return self.forward(x).argmax(dim=-1)
 
 
+class ResNet9(ResNet):
+    def __init__(self, n_classes,
+                 dropout_conv=0.0, dropout_fc=0.0,
+                 act = nn.ReLU,
+                #  act = nn.LeakyReLU,
+                #  act = nn.SiLU,
+                #  act = Swish,
+                 ):
+        super(ResNet9, self).__init__(n_classes, dropout_conv, dropout_fc, act)
+
 class Net(nn.Module):
     """
     Internal ensembles of the model,
