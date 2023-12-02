@@ -158,8 +158,8 @@ def split_search(X, Y, min_samples_leaf, feature_search=None,  criterion='gini')
     split can be found.
 
     Args:
-        x(ndarray): Inputs.
-        y(ndarray): Labels.
+        X(ndarray): Inputs.
+        Y(ndarray): Labels.
         feature_search(int): Number of features to use for split search
         min_samples_leaf(int): Minimum number of samples to be deemed
         a leaf node.

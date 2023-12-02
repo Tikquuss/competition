@@ -5,6 +5,7 @@ from collections import Counter
 import os
 
 from utils import DATA_PATH, H, W
+from utils import remove_J_Z
 
 def over_sampling(data) :
     """Over sample the data"""
@@ -125,11 +126,11 @@ def get_train_val_test_set(
     X_A_all, X_B_all = X_A, X_B
 
     # remove 9 (J) and 25 (Z)
-    Y_train[Y_train > 9] = Y_train[Y_train > 9] - 1
-    Y_holdout_test[Y_holdout_test > 9] = Y_holdout_test[Y_holdout_test > 9] - 1
-    Y_val[Y_val > 9] = Y_val[Y_val > 9] - 1
-    Y_all[Y_all > 9] = Y_all[Y_all > 9] - 1
-
+    Y_train = remove_J_Z(Y_train)
+    Y_holdout_test = remove_J_Z(Y_holdout_test)
+    Y_val = remove_J_Z(Y_val)
+    Y_all = remove_J_Z(Y_all)
+    
     ############## resize
     if HEIGHT is not None and  WIDTH is not None :
         X_train = resize_data(X_train, HEIGHT, WIDTH)

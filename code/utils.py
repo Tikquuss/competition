@@ -41,11 +41,22 @@ os.makedirs(DIR_PATH_FIGURES, exist_ok=True)
 UPPER_CASE_ALPHABETS = list(string.ascii_uppercase)
 UPPER_CASE_ASCII = [ord(char) for char in UPPER_CASE_ALPHABETS]
 
-def class_to_ascii(Y) :
+
+def remove_J_Z(Y) :
+    # remove 9 (J) and 25 (Z)
+    Y = copy.deepcopy(Y)
+    Y[Y > 9] = Y[Y > 9] - 1
+    return Y
+
+def reconsider_J_Z(Y) :
     # reconsider 9 (J) and 25 (Z)
     Y = copy.deepcopy(Y)
     Y[Y >= 9] = Y[Y >= 9] + 1
-    return [UPPER_CASE_ASCII[y] for y in Y]
+    return Y  
+
+def class_to_ascii(Y) :
+    # reconsider 9 (J) and 25 (Z) and convert to ascii
+    return [UPPER_CASE_ASCII[y] for y in reconsider_J_Z(Y)]
 
 def chars2ascii_sum_ascii2char(character1, character2, is_int_or_char = "int"):
     """
