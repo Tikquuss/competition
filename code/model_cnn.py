@@ -189,13 +189,7 @@ class ResNet(nn.Module):
         self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512)) # 512 x 4 x 4
         self.drop2 = nn.Dropout2d(p=dropout_conv)
 
-        self.fc = nn.Sequential(nn.MaxPool2d(2), # 512 x 1 x 1
-                                        nn.Flatten(),    # 512
-                                        nn.Linear(512, 256),
-                                        act(),
-                                        nn.Dropout(p=dropout_fc),
-                                        nn.Linear(256, n_classes),
-                                        ) # 24
+        self.init_fc(dropout_fc, n_classes, in_dim=512) # 512 x 1 x 1
 
         self.softmax = nn.LogSoftmax(dim=1)
 
@@ -205,7 +199,7 @@ class ResNet(nn.Module):
         # for m in self.fc :
         #       if isinstance(m, nn.Linear): torch.nn.init.xavier_uniform_(m.weight)
 
-    def forward(self, x):
+    def features(self, x):
         h = self.conv1(x)
         h = self.conv2(h)
         h = self.res1(h) + h
@@ -214,9 +208,31 @@ class ResNet(nn.Module):
         h = self.conv4(h)
         h = self.res2(h) + h
         h = self.drop2(h)
+        return h
+
+    def forward(self, x):
+        h = self.features(x)
         h = self.fc(h)
         h = self.softmax(h)
         return h
+
+    def init_fc(self, dropout_fc=0.0, n_classes=24, in_dim=None, x=None):
+        if in_dim is None :
+            assert x is not None
+            h = self.features(x)
+            h=torch.flatten(torch.nn.functional.max_pool2d(h, 2), start_dim=1, end_dim=-1)
+            in_dim=h.shape[1]
+            #print(in_dim, h.shape)
+
+        act = nn.ReLU
+        self.fc = nn.Sequential(nn.MaxPool2d(2), # 512 x m x m
+                                        nn.Flatten(),    # 512 q^2
+                                        nn.Linear(in_dim, 256),
+                                        act(),
+                                        nn.Dropout(p=dropout_fc),
+                                        nn.Linear(256, n_classes),
+                                        ) # 24
+        if x is not None : print(self.fc)
 
     def predict(self, x):
         return self.forward(x).argmax(dim=-1)

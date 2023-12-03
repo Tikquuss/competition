@@ -579,6 +579,9 @@ class RandomForestClassifier:
             tree.train(X, Y)
             self._trees.append(tree)
 
+    def fit(self, X, Y):
+        self.train(X, Y)
+
     def eval(self, X, Y):
         """"Evaluate accuracy on dataset."""
         Y_hat = self.predict(X)

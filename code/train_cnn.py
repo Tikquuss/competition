@@ -80,12 +80,14 @@ if __name__ == "__main__" :
     ########################################################################
     ########################################################################
     # Model & Trainer
-    #model = MyCNN(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
-    #model = MyCNN_2(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
-    model = ResNet(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc).to(DTYPE).to(device)
-    #model = Net(n_classes=n_classes).to(DTYPE).to(device)
+    #model = MyCNN(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc)
+    #model = MyCNN_2(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc)
+    model = ResNet(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc)
+    model.init_fc(dropout_fc=params.dropout_fc, n_classes=n_classes, x=torch.randn(1, 1, HEIGHT, WIDTH))
+    #model = Net(n_classes=n_classes)
     #print(model)
 
+    model = model.to(DTYPE).to(device)
     optimizer = optim.AdamW(model.parameters(), params.learning_rate, weight_decay=params.weight_decay)
     if params.scheduler:
         lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.98)
