@@ -5,7 +5,7 @@ import tqdm
 
 from utils import DIR_PATH_FIGURES, ascii2char_list, class_to_ascii
 
-def show_example_images(X, Y=None, n_imgs=15, mono='gray'):
+def show_example_images(X, Y=None, n_imgs=15, mono='gray', fileName = None, dpf=None, show=True):
     C=5
     L=n_imgs//C + 1*(n_imgs%C!=0)
     figsize=(5*C, 5*L)
@@ -16,6 +16,10 @@ def show_example_images(X, Y=None, n_imgs=15, mono='gray'):
         plt.imshow(X[idx], cmap = mono)
         if Y is not None : plt.title("Class {} ({})".format(Y[idx], Y_ch[idx]))
     plt.tight_layout()
+    if dpf is None : dpf=DIR_PATH_FIGURES
+    if fileName is not None : plt.savefig(f"{dpf}/{fileName}"  + '.pdf', dpi=300, bbox_inches='tight', format='pdf')
+    
+    if show : plt.show()
 
 def save_example_images(X, Y, savaPath, mono = 'gray', use_tqdm=True):
     os.makedirs(savaPath, exist_ok=True)
