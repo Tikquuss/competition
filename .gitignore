@@ -2,6 +2,7 @@
 /submissions
 /figures
 /log*
+/report*
 /code/pystacknet
 
 # Byte-compiled / optimized / DLL files
