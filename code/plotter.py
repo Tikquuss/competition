@@ -21,6 +21,8 @@ def show_example_images(X, Y=None, n_imgs=15, mono='gray', fileName = None, dpf=
     
     if show : plt.show()
 
+    return Y_ch
+
 def save_example_images(X, Y, savaPath, mono = 'gray', use_tqdm=True):
     os.makedirs(savaPath, exist_ok=True)
     C, L = 1, 1
