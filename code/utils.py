@@ -10,6 +10,7 @@ import copy
 # Default image size
 H, W = 28, 28
 
+# To save data, figures, model checkpoints ...
 MAIN_PATH="../"
 
 # Path of train.csv and test.csv
@@ -95,7 +96,7 @@ def predict_test(model, X_test) :
     return model.predict(X_test[0]), model.predict(X_test[1])
 
 def predict_nontest(model, X, Y, seed=0) :
-    """split (X, Y) in two part, make prediciton like in test set"""
+    """split (X, Y) in two parts, make prediciton like in test set"""
     n = X.shape[0]
     mid = n//2
 
