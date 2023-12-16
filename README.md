@@ -24,17 +24,17 @@ Our code is divided into files. Here is the role of each file:
     * `plotter.py`: functions for displaying images, figures, ...
     * `utils.py`: contains useful routines for all the code
 
-* Random Rorest : 
+* Random Forest : 
     - `model_tree.py`: contains our numpy implementation of random forest
     - `train_tree.py`: the script to be used to train a random forest
     - `hp_search_sklearn.py`: the script to run the hyperparameter search for decision trees (with sklearn implementation)
 
 * Convolutional Neural Network
     - `model_cnn.py`: Implementation of our CNN models (smallCNN, bigCNN, RestNet ...)
-    - `ResNet_general.py`: (we didn't use this): an implementation of ResNet50, ResNet101 and ResNet152 from https://github.com/JayPatwardhan/ResNet-PyTorch/blob/master/ResNet/ResNet.py
+    - `ResNet_general.py` (we didn't use this): an implementation of ResNet50, ResNet101 and ResNet152 from https://github.com/JayPatwardhan/ResNet-PyTorch/blob/master/ResNet/ResNet.py
     - `train_cnn.py` : script to be used to train CNNs
     - `train_loop.sh`: train with several random seeds
-    - `trainer.py` : contains the main Trainer class, which takes a model, its loss and its optimizer, trains it by keeping the parameters at each epoch, and returns the model
+    - `trainer.py` : contains the main `Trainer` class, which takes a model, its loss function and its optimizer, trains it and returns the model
 
 ## Requirements 
 
@@ -87,7 +87,7 @@ python train_cnn.py --model_name test  --learning_rate 0.001 --weight_decay 0.00
 % n_epochs : number of epochs
 % batch_size : bach size
 % dropout_conv : dropout for convnet 
-% dropout_fc : dropout classifier (fc layer)
+% dropout_fc : dropout for classifier (fc layer)
 % train_pct : training data percentage
 % holdout_pct : test data percentage
 % SIZE : HEIGHT, WIDTH (upsample?, downsample?)
@@ -103,7 +103,7 @@ chmod +x train_loop.sh
 
 ## Performances & Submission & Figures
 
-Once training is complete, will : :
+Once training is complete, will :
 * display training performance, and :
     - validation performance if there was validation data (if train_pct + holdout_pct < 100)
     - test performance if there was test data (if holdout_pct > 0)
