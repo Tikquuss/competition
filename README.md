@@ -55,6 +55,17 @@ cd competition/code
 pip install -r ../requirements.txt
 ```
 
+## Dataset
+
+Before any execution, it is important to make sure that the folder [data](data) must contain at least these two files:
+    - `sign_mnist_train.csv`: training data file
+    - `test.csv`: test data file (without label)
+The file `sample_submission.csv ` is not use in our code.
+
+See the [competition website](https://www.kaggle.com/competitions/ascii-sign-language/overview) for more informations about these files.
+
+If these files are not present in this folder and named as such, the code will return an error when you run it.
+
 ## Execution
 
 * To train random forest on the command line, call:
