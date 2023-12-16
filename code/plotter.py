@@ -13,6 +13,7 @@ def show_example_images(X, Y=None, n_imgs=15, mono='gray', fileName = None, dpf=
     C=5
     L=n_imgs//C + 1*(n_imgs%C!=0)
     figsize=(5*C, 5*L)
+    Y_ch=None
     if Y is not None : Y_ch = ascii2char_list(class_to_ascii(Y))
     fig = plt.figure(figsize = figsize)
     for i, idx in enumerate(torch.randint(0, X.shape[0], (n_imgs,))) :

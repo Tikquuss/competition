@@ -4,7 +4,7 @@
 <center><b>
 Kaggle Competition 2 : ASCII Sign Language
 </b></center><hr>
-<br><br>
+<br>
 
 * Name : TIKENG NOTSAWO Pascal Junior 
 * Email : pascal.junior.tikeng.notsawo@umontreal.ca
@@ -12,6 +12,8 @@ Kaggle Competition 2 : ASCII Sign Language
 * Kaggle username: pascalnotsawo
 
 * Kaggle : https://www.kaggle.com/competitions/ascii-sign-language/overview
+
+<br>
 
 ## Overwiew
 
@@ -26,13 +28,13 @@ Our code is divided into files. Here is the role of each file:
     - `model_tree.py`: contains our numpy implementation of random forest
     - `train_tree.py`: the script to be used to train a random forest
     - `hp_search_sklearn.py`: the script to run the hyperparameter search for decision trees (with sklearn implementation)
-    - `train_loop.sh`: train with several random seeds
 
 * Convolutional Neural Network
     - `model_cnn.py`: Implementation of our CNN models (smallCNN, bigCNN, RestNet ...)
     - `ResNet_general.py`: (we didn't use this): an implementation of ResNet50, ResNet101 and ResNet152 from https://github.com/JayPatwardhan/ResNet-PyTorch/blob/master/ResNet/ResNet.py
     - `train_cnn.py` : script to be used to train CNNs
-    - `trainer.py` : contains the main Trainer class, which takes a model, its loss and its optimizer, trains it by keeping the parameters at each epoch, and returns the model.
+    - `train_loop.sh`: train with several random seeds
+    - `trainer.py` : contains the main Trainer class, which takes a model, its loss and its optimizer, trains it by keeping the parameters at each epoch, and returns the model
 
 ## Requirements 
 
@@ -49,8 +51,8 @@ tqdm
 
 ```bash
 git clone https://github.com/Tikquuss/competition
-cd competition
-pip install -r requirements.txt
+cd competition/code
+pip install -r ../requirements.txt
 ```
 
 ## Execution
@@ -91,6 +93,13 @@ python train_cnn.py --model_name test  --learning_rate 0.001 --weight_decay 0.00
 % SIZE : HEIGHT, WIDTH (upsample?, downsample?)
 % seed : random seed
 ```
+OR (to loop over many random seeds)
+```bash
+chmod +x train_loop.sh
+./train_loop.sh test 2
+% the first argument is the model name and the second is the number of epochs
+% see the file for more informations
+```
 
 ## Performances & Submission & Figures
 
@@ -104,3 +113,7 @@ Once training is complete, will : :
     - confusion matrices
     - csv file for submission to kaggle
     - the trained model and its information
+
+## Notebooks
+
+In the folder [notebooks](notebooks), notebook [data_informations.ipynb](notebooks/data_informations.ipynb) allows to reproduce some figures concerning data information, and notebooks [RandomForest&Sklearn.ipynb](notebooks/RandomForest&Sklearn.ipynb) and [CNN.ipynb](notebooks/CNN.ipynb) show respectively how to interactively execute random forest and CNN model training, and also reproduce notebook figures
