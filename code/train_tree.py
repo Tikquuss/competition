@@ -1,5 +1,7 @@
 """
-python train_tree.py --model_name test --n_estimators 100 --max_depth 100 --max_samples 1.0 --sklearn False --SIZE 28 --train_pct 90 --holdout_pct 10 --seed 0
+How to use?
+
+python train_tree.py --model_name test --n_estimators 100 --max_depth 100 --max_samples 1.0 --max_features sqrt --sklearn False --SIZE 28 --train_pct 90 --holdout_pct 10 --seed 0
 """
 
 import time
@@ -20,25 +22,42 @@ from plotter import confusion_matrix, scores, plot_confusion_matrix
 
 if __name__ == "__main__" :
 
+    ########################################################################
+    ########################################################################
+    # Params
     parser = argparse.ArgumentParser(description="Run an experiment competition")
-    parser.add_argument("--model_name", type=str, help="to save the sumbssion")
+    parser.add_argument("--model_name", type=str, help="to save the submission")
     parser.add_argument("--n_estimators", type=int, help="Number of trees")
-    parser.add_argument("--max_depth", type=int, help="Maximum deph")
+    parser.add_argument("--max_depth", type=int, help="Maximum deph of trees")
     parser.add_argument("--criterion", type=str, default="gini", help="criterion")
-    parser.add_argument("--max_samples", type=str, default="1.0", help="max samples")    
+    parser.add_argument("--max_samples", type=str, default="1.0", help="max boostrap samples") 
+    parser.add_argument("--max_features", type=str, default="sqrt", help="max features per tree")   
     parser.add_argument("--sklearn", type=bool_flag, default=False, help="Try sklearn or not")
     parser.add_argument("--train_pct", type=float, default=90, help="training data percentage") 
     parser.add_argument("--holdout_pct", type=float, default=10, help="test data percentage")
-    parser.add_argument("--SIZE", type=int, default=H, help="HEIGHT, WIDTH : 28, 15, 10...")
+    parser.add_argument("--SIZE", type=int, default=H, help="HEIGHT, WIDTH : 28, 15, 10... (upsample?, downsample?)")
     parser.add_argument("--seed", type=int, default=0, help="random seed")
     params = parser.parse_args()
     print(params)
 
+    params.max_samples = float(params.max_samples)
+    if params.max_samples > 1 : params.max_samples = int(params.max_samples)  
+    if params.max_samples == 1.0 : params.max_samples = None
+    try :
+        params.max_features = float(params.max_features)
+        if params.max_features > 1 : params.max_features = int(params.max_features)  
+        if params.max_features == 1.0 : params.max_features = None  
+    except TypeError : # sqrt, log ...
+        pass
+    
     # boostrap (leave fo false, since random forest will do it)
     boostrap=False
     max_samples=0.9
     replace=False
 
+    ########################################################################
+    ########################################################################
+    # Where to log the experiments
     log_dir = Path(DIR_PATH_FIGURES).parent.absolute()
     #log_dir = path_leaf(DIR_PATH_FIGURES)
     fileName, i = params.model_name, 1
@@ -67,16 +86,13 @@ if __name__ == "__main__" :
     if params.sklearn : class_model = sklearn_RandomForestClassifier
     else : class_model = RandomForestClassifier
 
-    params.max_samples = float(params.max_samples)
-    if params.max_samples > 1 : params.max_samples = int(params.max_samples)  
-    if params.max_samples == 1.0 : params.max_samples = None  
     forest = class_model(
                     n_estimators=params.n_estimators, 
                     criterion=params.criterion,
                     max_depth=params.max_depth, 
                     min_samples_split=2,
                     min_samples_leaf=1,
-                    max_features='sqrt',
+                    max_features=params.max_features,
                     max_leaf_nodes=None,
                     min_impurity_decrease=0.0,
                     bootstrap=True,
@@ -84,7 +100,6 @@ if __name__ == "__main__" :
                     verbose=0,
                     max_samples=params.max_samples,
             )
-
 
     ########################################################################
     ########################################################################
@@ -146,15 +161,23 @@ if __name__ == "__main__" :
     print("test : ", test_acc)
     print("training time: %s"%(training_time))
         
+    ########################################################################
+    ########################################################################
+    # Confusion matrix
     plot_confusion_matrix(conf_matrix_1, fileName=f"{fileName}_train", dpf=DIR_PATH_FIGURES)
     _ = scores(conf_matrix_1, fileName=f"{fileName}_train", dpf=DIR_PATH_FIGURES)
 
     plot_confusion_matrix(conf_matrix_2, fileName=f"{fileName}_test", dpf=DIR_PATH_FIGURES)
     _ = scores(conf_matrix_2, fileName=f"{fileName}_test", dpf=DIR_PATH_FIGURES)
 
-
+    ########################################################################
+    ########################################################################
+    # Save the test set prediction is csv format for submission
     save_for_submission(IDs_test, Y_hat_A, Y_hat_B, fileName=f"{fileName}.csv", dps=DIR_PATH_SUBMISSIONS)
 
+    ########################################################################
+    ########################################################################
+    # Save the model & meta-data
     with open(f"{log_dir}/{fileName}.pickle" ,"wb") as file_handle:
         to_save = {
             "model" : forest,

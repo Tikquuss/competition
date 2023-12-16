@@ -101,9 +101,11 @@ def save_for_submission(IDs, Y_hat_A, Y_hat_B, fileName="submission.csv", dps=No
     pd.DataFrame({'id': IDs, 'label': Y_hat}, dtype=str).to_csv(os.path.join(dps, fileName),  index=False, sep=",")
 
 def predict_test(model, X_test) :
+    """make prediction on test set using a model"""
     return model.predict(X_test[0]), model.predict(X_test[1])
 
 def predict_nontest(model, X, Y, seed=0) :
+    """split (X, Y) in two part, make prediciton like in test set"""
     n = X.shape[0]
     mid = n//2
 
@@ -135,6 +137,7 @@ def predict_nontest(model, X, Y, seed=0) :
     return test_acc*100, test_acc_sum*100
 
 def eval(model, X, Y):
+    """Evaluate the model accuracy on (X, Y)"""
     Y_hat = model.predict(X)
     return sum(Y_hat == Y) / X.shape[0]
 
@@ -156,13 +159,3 @@ def path_leaf(path):
     # https://stackoverflow.com/a/8384788/11814682
     head, tail = ntpath.split(path)
     return head
-
-if __name__ == "__main__" :
-    tmp = chars2ascii_sum_ascii2char("A", "B", is_ascii_or_char='char'), chars2ascii_sum_ascii2char(ord("A"), ord("B"), is_ascii_or_char='int')
-
-    print(tmp)
-    n = 100
-    Y_hat_A = np.random.randint(min(UPPER_CASE_ASCII), max(UPPER_CASE_ASCII), n)
-    Y_hat_B = np.random.randint(min(UPPER_CASE_ASCII), max(UPPER_CASE_ASCII), n)
-    IDs  = np.arange(n)
-    save_for_submission(IDs, Y_hat_A, Y_hat_B, fileName="submission_test1.csv")

@@ -12,9 +12,6 @@ from plotter import plot_cdf, custom_imshow, confusion_matrix, scores, plot_conf
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-import cv2
-#sns.set(color_codes=True)
 
 import os
 import tqdm
@@ -57,8 +54,8 @@ import itertools
 import time
 from pathlib import Path
 
-fileName="report_sktree_hpsearch_13_12_(2)"
-fileName="test_test_test"
+fileName="report_sktree_hpsearch_13_12_(4)"
+#fileName="test_test_test"
 
 log_dir = Path(DIR_PATH_FIGURES).parent.absolute()
 log_dir = os.path.join(log_dir, f"{fileName}")
@@ -66,8 +63,6 @@ DIR_PATH_FIGURES__ = os.path.join(log_dir, "figures")
 DIR_PATH_SUBMISSIONS__ = os.path.join(log_dir, "submissions")
 os.makedirs(DIR_PATH_SUBMISSIONS__, exist_ok=True)
 os.makedirs(DIR_PATH_FIGURES__, exist_ok=True)
-
-
 
 """"
 m : the number of trees
@@ -77,24 +72,16 @@ d_prime : number of features to consider for each tree  ($d' = \lfloor \sqrt{d} 
 f  : purity criteria (Gini index or entropy). 
 """
 
-all_m = [1, 2]
-all_r = np.array([10,  50])
-all_n_prime = np.array([0.1])
-all_d_prime = [28, 0.1] # 28 = sqrt(d)
+all_m = np.array([1,  50,  100, 200, 300])
+all_r = np.array([10,  100, 150, 200, 300])
+all_n_prime = [0.1, 0.5,  1.0]
+all_d_prime = [28, 0.5, 1.0] # 28 = sqrt(d)
 #all_f = ["gini", "entropy"]
 all_f = ["gini"]
-
-# all_m = np.array([1,  50,  100, 200, 300])
-# all_r = np.array([10,  100, 150, 200, 300])
-# all_n_prime = [0.1, 0.5,  1.0]
-# all_d_prime = [28, 0.5, 1.0] # 28 = sqrt(d)
-# #all_f = ["gini", "entropy"]
-# all_f = ["gini"]
 
 all_hparams = itertools.product(all_m, all_r, all_n_prime, all_d_prime, all_f)
 all_hparams = list(all_hparams)
 len(all_hparams)
-
 
 all_performances = {}
 all_models = {}
@@ -142,3 +129,4 @@ _ = plot_cdf(x, fileName="hp_search_sktree_cdf_train", dpf=DIR_PATH_FIGURES__)
 plt.close()
 x = np.array(list(all_performances.values()))[:,1]
 _ = plot_cdf(x, fileName="hp_search_sktree_cdf_val", dpf=DIR_PATH_FIGURES__)
+

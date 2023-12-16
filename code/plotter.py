@@ -6,6 +6,10 @@ import tqdm
 from utils import DIR_PATH_FIGURES, ascii2char_list, class_to_ascii
 
 def show_example_images(X, Y=None, n_imgs=15, mono='gray', fileName = None, dpf=None, show=True):
+    """
+    Show the 'n_imgs' first images from X
+    If fileName is given, save the figure
+    """
     C=5
     L=n_imgs//C + 1*(n_imgs%C!=0)
     figsize=(5*C, 5*L)
@@ -24,6 +28,9 @@ def show_example_images(X, Y=None, n_imgs=15, mono='gray', fileName = None, dpf=
     return Y_ch
 
 def save_example_images(X, Y, savaPath, mono = 'gray', use_tqdm=True):
+    """
+    Save the image from X in the folder savaPath
+    """
     os.makedirs(savaPath, exist_ok=True)
     C, L = 1, 1
     figsize=(5*C, 5*L)

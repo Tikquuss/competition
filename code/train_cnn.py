@@ -1,4 +1,6 @@
 """
+How to use?
+
 python train_cnn.py --model_name test  --learning_rate 0.001 --weight_decay 0.0001 --scheduler False --n_epochs 50 --batch_size 512 --dropout_conv 0.0 --dropout_fc 0.0 --train_pct 90 --holdout_pct 10 --seed 0
 """
 
@@ -31,8 +33,11 @@ DTYPE=torch.float64
 
 if __name__ == "__main__" :
 
+    ########################################################################
+    ########################################################################
+    # Params
     parser = argparse.ArgumentParser(description="Run an experiment competition")
-    parser.add_argument("--model_name", type=str, help="to save the sumbssion")
+    parser.add_argument("--model_name", type=str, help="to save the submission")
     parser.add_argument("--learning_rate", type=float, default=0.001, help="learning rate") 
     parser.add_argument("--weight_decay", type=float, default=0.0001, help="weight decay") 
     parser.add_argument("--scheduler", type=bool_flag, default=False, help="use exponential lr scheduler or not") 
@@ -42,7 +47,7 @@ if __name__ == "__main__" :
     parser.add_argument("--dropout_fc", type=float, default=0.0, help="dropout classifier (fc layer)") 
     parser.add_argument("--train_pct", type=float, default=90, help="training data percentage") 
     parser.add_argument("--holdout_pct", type=float, default=10, help="test data percentage") 
-    parser.add_argument("--SIZE", type=int, default=H, help="HEIGHT, WIDTH : 10, 5, 2 ...")
+    parser.add_argument("--SIZE", type=int, default=H, help="HEIGHT, WIDTH : 10, 5, 2 ... (upsample?, downsample?)")
     parser.add_argument("--seed", type=int, default=0, help="random seed")
     params = parser.parse_args()
     print(params)
@@ -52,6 +57,9 @@ if __name__ == "__main__" :
     max_samples=0.9
     replace=False
 
+    ########################################################################
+    ########################################################################
+    # Where to log the experiments
     log_dir = Path(DIR_PATH_FIGURES).parent.absolute()
     #log_dir = path_leaf(DIR_PATH_FIGURES)
     fileName, i = params.model_name, 1
@@ -79,12 +87,12 @@ if __name__ == "__main__" :
     
     ########################################################################
     ########################################################################
-    # Model & Trainer
+    # Model & Optimizer & Criterion Trainer
+
     #model = MyCNN(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc)
     #model = MyCNN_2(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc)
     model = ResNet(n_classes=n_classes, dropout_conv=params.dropout_conv, dropout_fc=params.dropout_fc)
     model.init_fc(dropout_fc=params.dropout_fc, n_classes=n_classes, x=torch.randn(1, 1, HEIGHT, WIDTH))
-    #model = Net(n_classes=n_classes)
     #print(model)
 
     model = model.to(DTYPE).to(device)
@@ -149,6 +157,9 @@ if __name__ == "__main__" :
     print("test : ", test_acc)
     print("training time: %s"%(training_time))
 
+    ########################################################################
+    ########################################################################
+    # Confusion matrix
     plot_training_curve(n_epochs, train_losses, train_accs, val_losses, val_accs, fileName=fileName, dpf=DIR_PATH_FIGURES)
 
     plot_confusion_matrix(conf_matrix_1, fileName=f"{fileName}_train", dpf=DIR_PATH_FIGURES)
@@ -157,7 +168,14 @@ if __name__ == "__main__" :
     plot_confusion_matrix(conf_matrix_2, fileName=f"{fileName}_test", dpf=DIR_PATH_FIGURES)
     _ = scores(conf_matrix_2, fileName=f"{fileName}_test", dpf=DIR_PATH_FIGURES)
 
+    ########################################################################
+    ########################################################################
+    # Save the test set prediction is csv format for submission
     save_for_submission(IDs_test, Y_hat_A, Y_hat_B, fileName=f"{fileName}.csv", dps=DIR_PATH_SUBMISSIONS)
+
+    ########################################################################
+    ########################################################################
+    # Save the model & meta-data
     to_save = {
         "trainer" : trainer, 
         "progress" : [train_accs, train_losses, val_accs, val_losses, best_acc],

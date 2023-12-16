@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Swish(nn.Module):
+    """swish activation function with learned coefficient"""
     def __init__(self, beta=1.0, inplace=False):
         super(Swish, self).__init__()
         self.beta = torch.nn.Parameter(torch.tensor(data=beta, dtype=torch.float32), requires_grad=True)
@@ -11,8 +12,7 @@ class Swish(nn.Module):
         return x * torch.sigmoid(x * self.beta)
 
 class MyCNN(nn.Module):
-    """This class implements the CNN architecture in PyTorch"""
-
+    """This class implements a simple CNN architecture in PyTorch"""
     def __init__(self, n_classes,  dropout_conv=0.0, dropout_fc=0.0,
                  act = nn.ReLU,
                 #  act = nn.LeakyReLU,
@@ -68,8 +68,7 @@ class MyCNN(nn.Module):
 
 
 class MyCNN_2(nn.Module):
-    """This class implements the CNN architecture in PyTorch"""
-
+    """This class implements a simple CNN architecture in PyTorch"""
     def __init__(self, n_classes,
                  dropout_conv=0.0, dropout_fc=0.0,
                  act = nn.ReLU,
@@ -78,7 +77,7 @@ class MyCNN_2(nn.Module):
                 #  act = Swish,
                  ):
         """
-          Constructor for the MyCNN class.
+        Constructor for the MyCNN class.
         """
         super(MyCNN_2, self).__init__()
         max_pool_kernel_size, max_pool_kernel_stride = 2, None
@@ -118,24 +117,6 @@ class MyCNN_2(nn.Module):
               )
 
         dropout = dropout_fc
-        # self.fc = nn.Sequential(
-        #               nn.Linear(in_features=128*3*3, out_features=512, bias=True),
-        #               act(),
-        #               nn.BatchNorm1d(num_features=512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
-        #               nn.Dropout(p=dropout),
-        #               #
-        #               nn.Linear(in_features=512, out_features=256, bias=True),
-        #               act(),
-        #               nn.BatchNorm1d(num_features=256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
-        #               nn.Dropout(p=dropout),
-        #               #
-        #               nn.Linear(in_features=256, out_features=64, bias=True),
-        #               act(),
-        #               nn.BatchNorm1d(num_features=64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
-        #               nn.Dropout(p=dropout),
-        #               #
-        #               nn.Linear(in_features=64, out_features=self.n_classes, bias=True),
-        #         )
         self.fc = nn.Sequential(
                       nn.Linear(in_features=128*3*3, out_features=512, bias=True),
                       act(),
@@ -152,7 +133,6 @@ class MyCNN_2(nn.Module):
 
     def forward(self, x):
         h = self.conv(x)
-        #h = torch.flatten(h, start_dim=1, end_dim=-1)
         h = self.fc(h)
         h = self.softmax(h)
         return h
@@ -169,6 +149,10 @@ def conv_block(in_channels, out_channels, pool=False):
     return nn.Sequential(*layers)
 
 class ResNet(nn.Module):
+    """
+    This class implements a ResNet50 architecture in PyTorch
+    I used a tutorial for this, but I can't find the link to it anymore.
+    """
     def __init__(self, n_classes,
                  dropout_conv=0.0, dropout_fc=0.0,
                  act = nn.ReLU,
@@ -236,7 +220,6 @@ class ResNet(nn.Module):
 
     def predict(self, x):
         return self.forward(x).argmax(dim=-1)
-
 
 class ResNet9(ResNet):
     def __init__(self, n_classes,

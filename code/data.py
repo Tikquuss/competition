@@ -275,6 +275,7 @@ def get_dataset(
     seed=0,
     just_dataframe=False
     ) :
+    """Load and return the data from DATA_PATH"""
 
     COLUMS_TO_REMOVE = ["id"]
     # label, pixel1, ..., pixel784 (single 28x28=784 pixel image with grayscale values between 0-255)
@@ -313,84 +314,3 @@ def get_dataset(
             break
 
         return IDs_test, kfold_iterator
-
-if __name__ == "__main__" :
-    import os
-    import matplotlib.pyplot as plt
-
-
-    H, W = 28, 28
-    COLUMS_TO_REMOVE = ["id"]
-
-    # label, pixel1, ..., pixel784 (single 28x28=784 pixel image with grayscale values between 0-255)
-    train_dataset = pd.read_csv(os.path.join(DATA_PATH, "sign_mnist_train.csv"))
-    # ALL_COLUMS = test_dataset.columns
-    # id,	pixel_a1, ...,	pixel_a784,	pixel_b1,	..., pixel_b784
-    test_dataset = pd.read_csv(os.path.join(DATA_PATH, "test.csv"))
-    IDs_test = test_dataset["id"].to_numpy()
-    test_dataset = test_dataset.drop(COLUMS_TO_REMOVE, axis=1)
-
-    # (785-1)*2+1 = 1569
-    print(train_dataset.shape, test_dataset.shape)
-
-
-    print(Counter(pd.read_csv(os.path.join(DATA_PATH, "sample_submission.csv"))['label']))
-
-    """**Statistics**"""
-
-    ct = Counter(train_dataset['label'])
-    print(min(ct.keys()), max(ct.keys()))
-    ct = dict(sorted(ct.items()))
-    s = sum(ct.values())
-    pr = {k : round(100*ct[k]/s, 3) for k in ct.keys()}
-    print(ct)
-    print(pr)
-    sum(pr.values())
-
-    rows, cols = 1, 2
-    figsize = (6, 4)
-    figsize=(cols*figsize[0], rows*figsize[1])
-    fig = plt.figure(figsize=figsize)
-    ax = fig.add_subplot(rows, cols, 1)
-
-    ax.hist(
-        x=train_dataset['label'].to_numpy(),
-        label=None, color=None,
-        #histtype='bar',
-        #histtype='barstacked',
-        #histtype='step',
-        histtype='stepfilled',
-        align='mid', orientation='vertical',
-        stacked=False,
-        density=True,
-        rwidth=None,
-        #rwidth=0.8,
-    )
-
-    plt.show()
-
-    """**Visualize an example**"""
-
-    i = np.random.randint(0, train_dataset.shape[0])
-    img = train_dataset.iloc[i][1:].to_numpy().reshape(H, W) / 255
-    plt.imshow(img)
-
-    """## data"""
-
-    HEIGHT, WIDTH = 10, 10
-    HEIGHT, WIDTH = 5, 5
-    #HEIGHT, WIDTH = 2, 2
-
-    #HEIGHT, WIDTH = None, None
-
-    """**Normal training data**"""
-
-    X_tr, Y_tr, X_ht_test, Y_ht_test, X_val, Y_val, X_all, Y_all, X_test, X_test_all, X_ht_test_all, d = train_test_split(train_dataset, test_dataset, train_pct=70, holdout_pct=10, do_over_sampling=False, do_under_sampling=False, HEIGHT=HEIGHT, WIDTH=WIDTH)
-    #X_tr, Y_tr, X_ht_test, Y_ht_test, X_val, Y_val, X_all, Y_all, X_test, X_test_all, X_ht_test_all, d = train_test_split(train_dataset, test_dataset, train_pct=70, holdout_pct=10, do_over_sampling=False, do_under_sampling=False, HEIGHT=HEIGHT, WIDTH=WIDTH)
-
-    #X_tr, Y_tr, X_ht_test, Y_ht_test, X_val, Y_val, X_all, Y_all, X_test, X_test_all, X_ht_test_all, d = train_test_split(train_dataset, test_dataset, train_pct=100, holdout_pct=0, do_over_sampling=False, do_under_sampling=False, HEIGHT=HEIGHT, WIDTH=WIDTH)
-
-    print(len(train_dataset), X_tr.shape, X_ht_test.shape, X_val.shape, X_test[0].shape, X_test[1].shape)
-    print(X_all.shape, X_test_all[0].shape)
-
-    """**Training data for k-fold cross validation**"""

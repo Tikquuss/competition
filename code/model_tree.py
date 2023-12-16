@@ -1,3 +1,11 @@
+"""
+Random Forest implementation using numpy
+Thanks :
+    - https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
+    - https://github.com/sachaMorin/np-random-forest
+    - https://carbonati.github.io/posts/random-forests-from-scratch/
+"""
+
 import numpy as np
 import tqdm
 

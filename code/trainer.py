@@ -6,8 +6,13 @@ import os
 from data import get_dataset
 import numpy as np
 
-def resample(X, Y, max_samples=None, replace=False):
-    # Resample with/withouth replacement
+def resample(X, Y, max_samples=None, replace:bool=False):
+    """
+    Resample from (X, Y) with/withouth replacement
+    max_samples, (int, float) : number of samples
+        - if float, need to be in [0, 1] : proportion of data*
+    replace, bool : with/withouth replacement
+    """
     n_samples = X.shape[0]
     if max_samples is None : max_samples = n_samples
     elif type(max_samples) == int : max_samples = max_samples
@@ -22,7 +27,7 @@ def resample(X, Y, max_samples=None, replace=False):
     return X[bootstrap_indices], Y[bootstrap_indices]
 
 class Trainer:
-    """Trainer for classification"""
+    """Trainer for deep neural networks"""
     def __init__(self, model, criterion, optimizer, lr_scheduler=None, checkpoint_path=None):
         super(Trainer, self).__init__()
         self.model = model
@@ -227,6 +232,8 @@ def get_normal_dataset(
     scaler_class=None,
     device='cpu', seed=0
     ):
+    """Standard train/val/test split"""
+    
     IDs_test, (X_tr, Y_tr, X_ht_test, Y_ht_test, X_val, Y_val, X_all, Y_all, X_test, X_test_all, X_ht_test_all, d) = get_dataset(
         train_pct=train_pct, holdout_pct=holdout_pct, k_fold=False, HEIGHT=HEIGHT, WIDTH=WIDTH, do_over_sampling=False, do_under_sampling=False,
         scaler_class=scaler_class, is_pytorch=True, device=device, seed=seed
@@ -254,6 +261,7 @@ def get_kfold_dataset(
     scaler_class=None,
     device='cpu', seed=0
     ):
+    """Split the (train+validation) data in multiple folds for k-fold cross validation"""
     
 
     IDs_test, kfold_iterator = get_dataset(
@@ -286,7 +294,6 @@ def get_kfold_dataset(
 def get_dataset_pytorch(
     train_pct=80, holdout_pct=10, 
     train_transforms=None, test_transforms=None,
-
     k_fold=False, HEIGHT=None, WIDTH=None, 
     do_over_sampling=False, do_under_sampling=False,
     scaler_class=None,
@@ -294,6 +301,7 @@ def get_dataset_pytorch(
     device='cpu',
     seed=0
     ) :
+    """Load and return (in pytorch format) the data from DATA_PATH"""
 
     torch.manual_seed(seed)
 

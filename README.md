@@ -13,59 +13,94 @@ Kaggle Competition 2 : ASCII Sign Language
 
 * Kaggle : https://www.kaggle.com/competitions/ascii-sign-language/overview
 
-**Note**: Our codes are well-detailed notebooks with many comments, so there is no need for a very long readme.
+## Overwiew
 
-## Notebooks
+Our code is divided into files. Here is the role of each file:
+* General :
+    * `data.py`: contains useful routines concerning data (over/under sampling methods, standardization method ...)
+    * `ensemble.py`: method for combining the decisions of several classifiers
+    * `plotter.py`: functions for displaying images, figures, ...
+    * `utils.py`: contains useful routines for all the code
 
-The code is in two notebooks:
-- (1) `numpy_LogReg_LinearSVM-l1&l2_Sklearn_Stacknet.ipynb` : it contains the implementation of logistic regression, SVM (linear), MLP (with cross-entropy loss, hinge loss, both vanilla and quadratic version) from scratch, with *numpy*. At the end of the notebook  we also have some sklearn and stacknet methods.
-- (2) `pytorch_MLPLogReg_MLPSVM-l1-l2.ipynb` : it contains the MLP implementation in *pytorch* (with cross-entropy loss, hinge loss, both vanilla and quadratic version).
+* Random Rorest : 
+    - `model_tree.py`: contains our numpy implementation of random forest
+    - `train_tree.py`: the script to be used to train a random forest
+    - `hp_search_sklearn.py`: the script to run the hyperparameter search for decision trees (with sklearn implementation)
+    - `train_loop.sh`: train with several random seeds
+
+* Convolutional Neural Network
+    - `model_cnn.py`: Implementation of our CNN models (smallCNN, bigCNN, RestNet ...)
+    - `ResNet_general.py`: (we didn't use this): an implementation of ResNet50, ResNet101 and ResNet152 from https://github.com/JayPatwardhan/ResNet-PyTorch/blob/master/ResNet/ResNet.py
+    - `train_cnn.py` : script to be used to train CNNs
+    - `trainer.py` : contains the main Trainer class, which takes a model, its loss and its optimizer, trains it by keeping the parameters at each epoch, and returns the model.
 
 ## Requirements 
 
-For notebook 1, we use only simple libraries in the first part (LogReg, SVM, MLP): *numpy* mainly, *scipy* for some calculations (hessian and its inverse, etc.), *pandas* for data, *matplotlib* and *seaborn* for figures, etc.
-
-In the **Sklearn & stacknet** section of the notebook, we use the *sklearn*, *xgboost* and [*pystacknet*](https://github.com/h2oai/pystacknet) libraries.
-
-```bash
-# xgboost
-pip install xgboost
-# pystacknet
-!git clone https://github.com/h2oai/pystacknet
-%cd pystacknet
-!python setup.py install
+```txt
+torch
+torchvision
+matplotlib
+numpy
+pandas
+scikit-learn
+opencv-python
+tqdm
 ```
 
-For notebook 2, the only library added is [*Pytorch*](https://pytorch.org/). 
+```bash
+git clone https://github.com/Tikquuss/competition
+cd competition
+pip install -r requirements.txt
+```
 
 ## Execution
 
-Notebooks are generally divided into several sections: 
-* global variables: where we define the path to data and the path to the folder where we store figures and checkpoints
-* imports: for imports
-* data processing: We load data from csvs, perform pre-processing (normalization, over or undersampling, feature selection) and separate into pairs $(X, Y)$: training data, validation data, holdout test data, and test data.
-* For each model: detailed implementation and how to train them.
+* To train random forest on the command line, call:
 
-For the model execution section, there's a section for hyperparameters search and another for kfold cross-validation.
+```bash
+python train_tree.py --model_name test --n_estimators 100 --max_depth 100 --max_samples 1.0 --max_features sqrt --sklearn False --SIZE 28 --train_pct 90 --holdout_pct 10 --seed 0
 
-Everything is really detailed in the notebooks in each section, so to explain it all again here would be very redundant: all you have to do is make sure you have the necessary libraries, define your global variables as required, and execute the notebooks section by section (or directly the section you're interested in) following the instructions.
+% model_name : to save the submission
+% n_estimators : number of trees
+% max_depth : maximum deph of trees
+% criterion : criterion (gini, entropy)
+% max_samples : max boostrap samples
+% max_features : max features per tree 
+% sklearn : Try sklearn or not
+% train_pct : training data percentage
+% holdout_pct : test data percentage
+% SIZE : HEIGHT, WIDTH (upsample?, downsample?)
+% seed : random seed
+```
 
-Our models are very simple, so it doesn't usually take more than 1 minute to train a model: the hyperparameter search takes time (on the order of minutes) depending on how you define your ranges of values.
+* To train CNNs on the command line, call:
 
-## Figures
+```bash
+python train_cnn.py --model_name test  --learning_rate 0.001 --weight_decay 0.0001 --scheduler False --n_epochs 50 --batch_size 512 --dropout_conv 0.0 --dropout_fc 0.0 --train_pct 90 --holdout_pct 10 --seed 0
 
-Functions for displaying and/or saving figures are available in notebooks:
-- confusion matrix
-- precision, recall and f1-score per class
-- training curve per epoch
-- model weights (heatmap)
-- heatmap of accuracy as a function of several hyperparameters simultaneously
-- etc
+% model_name : to save the submission
+% learning_rate : learning rate
+% weight_decay : weight decay
+% scheduler :  use exponential lr scheduler or not
+% n_epochs : number of epochs
+% batch_size : bach size
+% dropout_conv : dropout for convnet 
+% dropout_fc : dropout classifier (fc layer)
+% train_pct : training data percentage
+% holdout_pct : test data percentage
+% SIZE : HEIGHT, WIDTH (upsample?, downsample?)
+% seed : random seed
+```
 
-Figures are saved in a folder of your choice.
+## Performances & Submission & Figures
 
-For histogram, see the file [plot.py](plot.py)
-
-## Predictions
-
-We have a function that takes a model, evaluates it, and saves the prediction in a Kaggle-submittable format.
+Once training is complete, will : :
+* display training performance, and :
+    - validation performance if there was validation data (if train_pct + holdout_pct < 100)
+    - test performance if there was test data (if holdout_pct > 0)
+* display training time
+* save (in the folder containing the code) :
+    - training curve (for CNNs)
+    - confusion matrices
+    - csv file for submission to kaggle
+    - the trained model and its information
