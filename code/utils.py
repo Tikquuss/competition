@@ -7,18 +7,10 @@ import os
 import ntpath
 import copy
 
+# Default image size
 H, W = 28, 28
 
-LOCAL=False
-LOCAL=True
-
-if not LOCAL :
-    from google.colab import drive
-    drive.mount('/content/gdrive')
-
-folderDRIVE = "/content/gdrive/MyDrive/MILA/UdeM/3_Fall_2023/IFT6390B_Fundamentals_of_machine_learning/competitions/2" #@#param {type:"string"}
-folderLOCAL="../" #@#param {type:"string"}
-MAIN_PATH=folderLOCAL if LOCAL else folderDRIVE
+MAIN_PATH="../"
 
 # Path of train.csv and test.csv
 DATA_PATH=f"{MAIN_PATH}/data"
@@ -31,7 +23,6 @@ DIR_PATH_FIGURES = f"{MAIN_PATH}/figures"
 # # Where to save thes figures
 # DIR_PATH_FIGURES = "./figures"
 
-import os
 os.makedirs(DIR_PATH_SUBMISSIONS, exist_ok=True)
 os.makedirs(DIR_PATH_FIGURES, exist_ok=True)
 
@@ -40,7 +31,6 @@ os.makedirs(DIR_PATH_FIGURES, exist_ok=True)
 #UPPER_CASE_ALPHABETS = list(string.ascii_uppercase.replace("J", "").replace("Z", ""))
 UPPER_CASE_ALPHABETS = list(string.ascii_uppercase)
 UPPER_CASE_ASCII = [ord(char) for char in UPPER_CASE_ALPHABETS]
-
 
 def remove_J_Z(Y) :
     # remove 9 (J) and 25 (Z)

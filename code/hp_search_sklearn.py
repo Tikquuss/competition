@@ -2,7 +2,7 @@
 # Imports from our code
 ###############################
 
-from utils import DATA_PATH, DIR_PATH_FIGURES, DIR_PATH_SUBMISSIONS, H, W, LOCAL
+from utils import DATA_PATH, DIR_PATH_FIGURES, DIR_PATH_SUBMISSIONS, H, W
 from utils import predict_nontest, predict_test, save_for_submission, eval
 from data import  get_dataset
 from plotter import plot_cdf, custom_imshow, confusion_matrix, scores, plot_confusion_matrix, show_example_images
